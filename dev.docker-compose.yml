@@ -1,0 +1,29 @@
+services:
+  frontend-dev:
+    build:
+      context: frontend
+      dockerfile: dev.Dockerfile
+    ports:
+      - ${FRONTEND_PORT}:5173
+    depends_on:
+      - server-dev
+    volumes:
+      - ./frontend:/app
+      - front-modules:/app/node_modules
+
+  server-dev:
+    build:
+      context: server
+      dockerfile: dev.Dockerfile
+    ports:
+      - ${SERVER_PORT}:8080
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/app
+      - server-modules:/app/node_modules
+    user: "1000:1000"
+
+volumes:
+  front-modules:
+  server-modules:

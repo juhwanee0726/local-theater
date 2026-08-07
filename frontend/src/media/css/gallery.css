@@ -1,0 +1,52 @@
+.gallery {
+    width: 100%;
+    padding: 2px;
+
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 2px;
+    align-content: start;
+
+    box-sizing: border-box;
+    background-color: var(--gallery-color);
+}
+
+.card {
+    min-width: 0;
+
+    > img, canvas {
+        width: 100%;
+        display: block;
+        aspect-ratio: 1;
+        object-fit: cover;
+    }
+
+    > .description {
+        min-width: 0;
+        background-color: #dce0e8;
+
+        > div {
+            display: flex;
+            justify-content: space-between;
+            min-width: 0;
+        }
+
+        p {
+            min-width: 0;
+            font-size: 0.6rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    @media screen and (max-width: 576px) {
+        > .description {
+            display: none;
+        }
+
+    }
+}

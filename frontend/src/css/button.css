@@ -1,0 +1,59 @@
+:root {
+    --btn-main-color: #4c4f69;
+    --btn-sub-color: #fff;
+}
+
+.btn {
+    min-width: 60px;
+    min-height: 40px;
+    border: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* ColorType */
+.btn--confirm {
+    --btn-main-color: #1e66f5;
+}
+.btn--danger {
+    --btn-main-color: #d20f39;
+}
+
+/* Color */
+.btn--primary {
+    background-color: var(--btn-main-color);
+    color: var(--btn-sub-color);
+}
+
+.btn--secondary {
+    background-color: var(--btn-sub-color);
+    color: var(--btn-main-color);
+    border: 1px solid var(--btn-main-color);
+}
+.btn--tertiary {
+    background-color: transparent;
+    color: var(--btn-main-color);
+}
+
+/* Pseudo */
+.btn:hover {
+    filter: brightness(0.9);
+}
+
+.btn:active {
+    filter: brightness(0.8);
+}
+
+.btn--tertiary:hover {
+    border: 1px solid var(--btn-main-color);
+}
+.btn--tertiary:active {
+    border: 1px solid var(--btn-main-color);
+    background-color: var(--btn-sub-color);
+}

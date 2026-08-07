@@ -1,0 +1,57 @@
+.thumb-change-modal {
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > .video-player {
+        flex: 1;
+    }
+
+    > .gallery,
+    > .thumb-control {
+        flex: 0 0 auto;
+    }
+}
+
+.thumb-control {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    > input {
+        height: 24px;
+        width: 100%;
+        margin: 0;
+    }
+
+    > div {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+
+        > button {
+            height: 48px;
+            aspect-ratio: 1/1;
+        }
+    }
+}
+
+/* .thumb-control > input{
+    height: 24px;
+    width: 100%;
+    margin: 0;
+}
+
+.thumb-control__btn {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.thumb-control__btn > button {
+    height: 48px;
+    aspect-ratio: 1/1;
+} */

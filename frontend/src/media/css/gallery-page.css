@@ -1,0 +1,27 @@
+#gallery-page {
+    position: relative;
+    width: 40vw;
+    height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 576px) {
+    #gallery-page {
+        width: 100vw;
+    }
+}
+
+.float-wrap {
+    position: absolute;
+
+}
+
+.float-wrap.bottom-left {
+    inset: auto auto 30px 30px;
+}
+
+.float-wrap.bottom-right {
+    inset: auto 30px 30px auto;
+}

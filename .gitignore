@@ -1,0 +1,17 @@
+# Dependency & Build Output
+node_modules
+dist
+
+# Envionment
+.env
+
+# Editor
+.vscode
+
+# Logs
+logs
+*.log
+
+# Custom
+backup/
+debug/

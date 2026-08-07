@@ -1,0 +1,14 @@
+.progress-bar, .progress-bar > .value {
+    border-radius: 7px;
+}
+
+.progress-bar {
+    height: 16px;
+    background-color: lightgrey;
+}
+
+.progress-bar > .value {
+    height: 100%;
+    width: 0;
+    background-color: #1e66f5;
+}

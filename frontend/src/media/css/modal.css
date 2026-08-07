@@ -1,0 +1,23 @@
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-list p {
+    overflow: hidden;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+.file-list .description {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+}
+
+@media screen and (max-width: 576px) {
+    .file-list .description {
+        font-size: 0.65rem;
+    }
+}

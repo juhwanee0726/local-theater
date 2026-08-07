@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build: frontend
+    ports:
+      - ${FRONTEND_PORT}:80
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  server:
+    build: server
+    ports:
+      - ${SERVER_PORT}:3334
+    volumes:
+      - /srv/encs:/app/encs
+    restart: unless-stopped

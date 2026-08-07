@@ -1,0 +1,3 @@
+- media.mutation.ts
+  - 업로드할 때 속도와 시간을 계산하는 로직을 수정해야 함.
+  - sliding window에 대해 알아보기
