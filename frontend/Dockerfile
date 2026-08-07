@@ -1,17 +1,23 @@
-FROM node:22-alpine AS builder
+#
+# ----- Builder ----------
+#
+FROM node:24 AS builder
 
 WORKDIR /app
 
-COPY *.json .
-RUN npm install
+COPY package*.json .
+RUN npm ci
 
 COPY . .
 
 RUN npm run build
 
-###
-
+#
+# ----- Production ----------
+#
 FROM nginx:stable-alpine
+
+RUN rm -rf /usr/share/nginx/html/*
 
 COPY default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html/dist

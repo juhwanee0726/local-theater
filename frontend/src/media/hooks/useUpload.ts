@@ -31,13 +31,14 @@ export default function useUpload(type: MediaType) {
         const files = Array.from(e.target.files);
 
         try {
-            await Promise.all(files.map(async file => {
+            const results = await Promise.allSettled(files.map(async file => {
                 const id = crypto.randomUUID();
                 return uploadLimit(
                     mutation.mutateAsync,
                     { file, onUploadProgress: p => addProgress(id, { file, progress: p }) },
                 ).finally(() => deleteProgressEntry(id))
             }));
+            console.log(results);
         } catch (err) {
             console.error(err);
         }

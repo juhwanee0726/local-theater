@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "imports": {
-    "#/*": "./src/*"
+    "#/*": "./dist/*"
   },
   
   "scripts": {

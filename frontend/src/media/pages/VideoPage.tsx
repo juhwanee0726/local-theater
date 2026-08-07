@@ -19,14 +19,13 @@ export default function VideoPage() {
     }
 
     const handleCreateThumbnail = (offset: number) => {
-        onCreateThumbnail(offset)
+        onCreateThumbnail(offset);
         navigate("/videos");
-
     }
 
     const handleToggleThumbChangeModal = () => setIsThumbModalOpen(prev => !prev);
     const handleCloseThumbChangeModal = () => setIsThumbModalOpen(false);
-    
+
 
     if (!media || media.type === "image") return null;
 
@@ -47,13 +46,13 @@ export default function VideoPage() {
                 <p>id: {media.id}</p>
                 <p>name: {media.name}</p>
                 <p>size: {formatDataUnit(media.size)}</p>
-                <p>createdAt: {formatTime(media.createdAt)}</p>                
+                <p>createdAt: {formatTime(media.createdAt)}</p>
                 <p>resolution: {media.width}x{media.height}</p>
                 <p>duration: {media.duration}s</p>
                 <p>fps: {media.fps}</p>
             </section>
 
-            {isThumbModalOpen && <ThumbnailChangeModal onClose={handleCloseThumbChangeModal} onConfirm={handleCreateThumbnail} video={media}/>}
+            {isThumbModalOpen && <ThumbnailChangeModal onClose={handleCloseThumbChangeModal} onConfirm={handleCreateThumbnail} video={media} />}
 
         </main>
     )

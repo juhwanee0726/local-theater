@@ -3,11 +3,11 @@ import ffmpegUtils from "#/util/ffmpegUtils.js";
 import logger from "#/util/logger.js";
 import fsp from "fs/promises";
 import path from "path";
-import { HttpError } from "../../src/error/error.js";
 import db from "./db/database.js";
 import mediaRepository from "./media.repository.js";
 import { MediaResponse } from "./types/media.response.js";
 import { Media, MediaType, ReadyMedia } from "./types/media.types.js";
+import { HttpError } from "#/error/error.js";
 
 const mediaService = {
     existsMedia: (hash: string) => mediaRepository.existsById(hash),

@@ -1,4 +1,4 @@
-public/media/*
+data/media/*
 data/tmp/*
 data/tmp/chunks/*
 !data/tmp/chunks/

@@ -3,7 +3,8 @@ node_modules
 dist
 
 # Envionment
-.env
+.env*
+!.env.example
 
 # Editor
 .vscode

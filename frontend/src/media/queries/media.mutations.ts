@@ -133,7 +133,7 @@ export const useMediaUploadMutation = (type: MediaType) => {
                 p => progressMap.update(chunk.index, p.loaded, p.bytes)
             )));
 
-            console.log("All parts uploaded");
+            console.log(`All parts uploaded from ${file.name}`);
             return uploadApi.merge(contract.sessionId);
         }
     })

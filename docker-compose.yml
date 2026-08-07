@@ -11,6 +11,9 @@ services:
     build: server
     ports:
       - ${SERVER_PORT}:3334
+    env_file:
+      - ./server/.env
     volumes:
-      - /srv/encs:/app/encs
+      - /srv/theater/db:/app/db
+      - /srv/theater/data:/app/data
     restart: unless-stopped
