@@ -1,9 +1,9 @@
 import cors from "cors";
 import express from "express";
-import logger from "./util/logger.js";
+import { errorHandler } from "./error/errorHandler.js";
 import mediaRouter from "./media/media.routes.js";
 import uploadRouter from "./media/upload/upload.routes.js";
-import { errorHandler } from "./error/errorHandler.js";
+import logger from "./util/logger.js";
 
 process.on("unhandledRejection", err => logger.error(err, "[UnhandledRejection]"));
 

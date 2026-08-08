@@ -18,14 +18,18 @@ export const uploadApi = {
     },
     /** PUT "/api/uploads/:sessionId/file" */
     uploadSingle: (sessionId: string, file: File, oriHash: string, onUploadProgress?: (p: UploadProgress) => void): Promise<void> => {
-        return client.put(`/api/uploads/${sessionId}/file`, file, {
+        const form = new FormData();
+        form.append("f", file);
+        return client.put(`/api/uploads/${sessionId}/file`, form, {
             headers: { "x-file-hash": oriHash },
             onUploadProgress: ({ loaded, bytes, estimated, rate }) => onUploadProgress?.({ loaded, bytes, estimated, rate, total: 0 })
         })
     },
     /** PUT "/api/uploads/:sessionId/chunks/:index" */
     uploadPart: (sessionId: string, data: UploadSessionPartRequest, onUploadProgress?: (p: UploadProgress) => void): Promise<void> => {
-        return client.put(`/api/uploads/${sessionId}/chunks/${data.index}`, data.blob, {
+        const form = new FormData();
+        form.append("f", data.blob);
+        return client.put(`/api/uploads/${sessionId}/chunks/${data.index}`, form, {
             headers: { "x-chunk-hash": data.hash },
             onUploadProgress: ({ loaded, bytes }) => onUploadProgress?.({ loaded, bytes, total: 0 })
         })

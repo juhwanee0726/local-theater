@@ -4,9 +4,9 @@ import { UploadSessionCreateRequest } from "../types/upload.request.js";
 import { UploadSessionCreateResponse, UploadSessionResponse } from "../types/upload.response.js";
 import { UploadSession, UploadType } from "../types/upload.types.js";
 import chunkUploadService from "./chunk-upload.service.js";
-import uploadSessionService from "./upload-session.service.js";
-import singleUploadSevice from "./single-upload.service.js";
 import postUploadService from "./post-upload.service.js";
+import singleUploadSevice from "./single-upload.service.js";
+import uploadSessionService from "./upload-session.service.js";
 
 /** GET /api/uploads */
 const getUploadSessions: RequestHandler<{}, UploadSession[], void, {uploadType?: UploadType}> = (req, res) => {

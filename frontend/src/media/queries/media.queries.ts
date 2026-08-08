@@ -12,7 +12,7 @@ export const useMediaCardsQuery = (type: MediaType) => {
         select: list => list.filter(item => item.status === "ready").map(item => toMediaCard(item)),
         refetchInterval: query => {
             // console.log({ queryHash: query.queryHash, state: query.state });
-            return query.state.data?.some(d => d.status === "pending") ? 2000 : false;
+            return query.state.data?.some(d => d.status === "pending") ? 1000 : false;
         }
     })
 }

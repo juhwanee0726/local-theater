@@ -8,9 +8,10 @@ import path from "path";
 import mediaRepository from "../media.repository.js";
 import { UploadTmp } from "../types/upload.types.js";
 import uploadSessionRepository from "./upload-session.repository.js";
+import busboy from "busboy";
 
 const chunkUploadService = {
-    uploadPart: async (file: Request, sessionId: string, index: number, oriHash: string) => {
+    uploadPart: async (req: Request, sessionId: string, index: number, oriHash: string) => {
         const session = uploadSessionRepository.findById(sessionId);
         if (!session) throw new HttpError(404, "Session not found");
         if (session.uploadType !== "chunk") throw new HttpError(400, "Invalid Upload type");
@@ -29,7 +30,24 @@ const chunkUploadService = {
         const chunkName = `${sessionId}-${String(index).padStart(pad, "0")}.part`;
         const chunkPath = path.join(CHUNKS_DIR, sessionId, chunkName);
 
-        const { hash } = await storageService.writeFile(file, chunkPath);
+        const bb = busboy({ headers: req.headers });
+
+        const { hash } = await new Promise<{ size: number, hash: string }>((resolve, reject) => {
+            let fileReceived = false;
+            bb.on("error", reject);
+            bb.on("file", (_, file, __) => {
+                fileReceived = true;
+                storageService.writeFile(file, chunkPath)
+                    .then(resolve)
+                    .catch(reject)
+            });
+            bb.on("close", () => {
+                if (!fileReceived) reject(new HttpError(400, "No file field in request"));
+            });
+            req.on("error", reject);
+            req.pipe(bb);
+        })
+
         if (hash !== oriHash) {
             await fsp.unlink(chunkPath)
                 .then(() => logger.info(`Unlinked ${chunkPath}`))

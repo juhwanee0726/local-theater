@@ -5,6 +5,7 @@ import { useMediaUploadMutation } from "../queries/media.mutations";
 import type { UploadItem } from "../types/media";
 import { useQueryClient } from "@tanstack/react-query";
 import { mediaKeys } from "../queries/media.keys";
+import {v4} from "uuid";
 
 export const uploadLimit = pLimit(3);
 
@@ -32,7 +33,7 @@ export default function useUpload(type: MediaType) {
 
         try {
             const results = await Promise.allSettled(files.map(async file => {
-                const id = crypto.randomUUID();
+                const id = v4();
                 return uploadLimit(
                     mutation.mutateAsync,
                     { file, onUploadProgress: p => addProgress(id, { file, progress: p }) },

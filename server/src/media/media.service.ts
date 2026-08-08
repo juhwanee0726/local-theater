@@ -36,12 +36,12 @@ const mediaService = {
 
         const mediaPath = path.join(MEDIA_DIR, generateMediaPath(id, media.ext))
         if (media.type === "image")
-            await fsp.unlink(mediaPath);
+            await fsp.unlink(mediaPath).catch(() => {});
         else {
             const thumbPath = path.join(MEDIA_DIR, generateMediaPath(id, THUMB_EXT));
             await Promise.all([
-                fsp.unlink(mediaPath),
-                fsp.unlink(thumbPath)
+                fsp.unlink(mediaPath).catch(() => {}),
+                fsp.unlink(thumbPath).catch(() => {})
             ]);
         }
 

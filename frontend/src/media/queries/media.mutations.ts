@@ -4,6 +4,7 @@ import { mediaApi, uploadApi } from "../api/media.api";
 import type { MediaType } from "../api/media.api.response";
 import { mediaKeys } from "./media.keys";
 import type { UploadProgress } from "../types/media";
+import { sha256 } from "js-sha256";
 
 export const networkLimit = plimit(5);
 
@@ -21,7 +22,7 @@ export const useMediaDeleteMutation = (type?: MediaType) => {
 export const useThumbnailCreateMutation = () => {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({id, offset}: {id: string, offset: number}) => mediaApi.createThumbnail(id, offset),
+        mutationFn: ({ id, offset }: { id: string, offset: number }) => mediaApi.createThumbnail(id, offset),
         onSuccess: () => {
             qc.invalidateQueries({ queryKey: mediaKeys.list() })
         }
@@ -32,16 +33,18 @@ export const useThumbnailCreateMutation = () => {
 // ----- Upload --------------------------------------------------
 //
 
-const getHash = async (file: File | Blob, algorithm: string) => {
-    const fileBuffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest(algorithm, fileBuffer);
-    const hash = Array.from(new Uint8Array(hashBuffer))
-        .map(digit => digit.toString(16).padStart(2, "0"))
-        .join("");
-    return hash;
-}
+// const getHash = async (file: File | Blob, algorithm: string) => {
+//     const fileBuffer = await file.arrayBuffer();
+//     const hashBuffer = await crypto.subtle.digest(algorithm, fileBuffer);
+//     const hash = Array.from(new Uint8Array(hashBuffer))
+//         .map(digit => digit.toString(16).padStart(2, "0"))
+//         .join("");
+//     return hash;
+// }
 
-const sliceFile = async (file: File, chunkSize: number, algorithm: string) => {
+const getHash = async (file: File | Blob) => sha256(await file.bytes());
+
+const sliceFile = async (file: File, chunkSize: number) => {
     const chunks = [];
 
     for (
@@ -51,7 +54,7 @@ const sliceFile = async (file: File, chunkSize: number, algorithm: string) => {
     ) {
         end = start + chunkSize;
         const blob = file.slice(start, end);
-        const hash = await getHash(blob, algorithm);
+        const hash = await getHash(blob);
 
         chunks.push({ index, blob, hash });
     }
@@ -113,7 +116,8 @@ export const useMediaUploadMutation = (type: MediaType) => {
 
             // Single Upload
             if (contract.uploadType === "single") {
-                const hash = await getHash(file, contract.algorithm);
+                const hash = await getHash(file);
+
                 return networkLimit(uploadApi.uploadSingle,
                     contract.sessionId, file, hash,
                     p => onUploadProgress?.({
@@ -125,7 +129,7 @@ export const useMediaUploadMutation = (type: MediaType) => {
 
             // Chunk Upload
             const progressMap = createProgressMap(file.size, onUploadProgress);
-            const chunks = await sliceFile(file, contract.chunkSize, contract.algorithm);
+            const chunks = await sliceFile(file, contract.chunkSize);
 
             await Promise.all(chunks.map(chunk => networkLimit(
                 uploadApi.uploadPart,
