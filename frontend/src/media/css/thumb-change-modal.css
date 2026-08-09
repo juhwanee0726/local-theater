@@ -6,6 +6,7 @@
     align-items: center;
 
     > .video-player {
+        display: flex;
         flex: 1;
     }
 
@@ -33,25 +34,8 @@
         gap: 20px;
 
         > button {
-            height: 48px;
+            height: 42px;
             aspect-ratio: 1/1;
         }
     }
 }
-
-/* .thumb-control > input{
-    height: 24px;
-    width: 100%;
-    margin: 0;
-}
-
-.thumb-control__btn {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.thumb-control__btn > button {
-    height: 48px;
-    aspect-ratio: 1/1;
-} */

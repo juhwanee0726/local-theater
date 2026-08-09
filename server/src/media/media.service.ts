@@ -112,7 +112,7 @@ const toMediaResponse = (media: Media): MediaResponse => {
             fps: media.fps,
             url: `/media/${path}`,
             thumbnailUrl: `/media/${thumbPath}`,
-            downloadUrl: `/media/download/${path}`
+            downloadUrl: `/api/media/${media.id}/download`
         }
     }
     return {
@@ -123,7 +123,7 @@ const toMediaResponse = (media: Media): MediaResponse => {
         height: media.height,
         url: `/media/${path}`,
         thumbnailUrl: `/media/${path}`,
-        downloadUrl: `/media/download/${path}`
+        downloadUrl: `/api/media/${media.id}/download`
     }
 }
 

@@ -75,7 +75,6 @@ const chunkUploadService = {
 
         const chunksDir = path.join(CHUNKS_DIR, sessionId);
         const uploadPath = path.join(TMP_DIR, sessionId);
-
         const { hash, size } = await storageService.mergeChunks(chunksDir, uploadPath);
         if (mediaRepository.existsById(hash)) {
             await fsp.rm(chunksDir, { recursive: true, force: true })

@@ -6,11 +6,19 @@ import "../css/media.css";
 import { formatDataUnit, formatTime } from "#/utils/FormatUtils";
 import ThumbnailChangeModal from "../components/ThumbnailChangeModal";
 import { useState } from "react";
+import Modal from "#/components/modal/Modal";
+import Button from "#/components/button/Button";
+
+type ModalType = "thumb" | "delete";
 
 export default function VideoPage() {
     const { id } = useParams();
     const { media, onDeleteMedia, onCreateThumbnail } = useMedia(id!);
-    const [isThumbModalOpen, setIsThumbModalOpen] = useState<boolean>(false);
+
+    const [modal, setModal] = useState<Record<ModalType, boolean>>({
+        thumb: false,
+        delete: false
+    });
     const navigate = useNavigate();
 
     const handleDeleteMedia = () => {
@@ -23,9 +31,16 @@ export default function VideoPage() {
         navigate("/videos");
     }
 
-    const handleToggleThumbChangeModal = () => setIsThumbModalOpen(prev => !prev);
-    const handleCloseThumbChangeModal = () => setIsThumbModalOpen(false);
-
+    const modalHandler: { [k in ModalType]: { [k in "open" | "close"]: () => void } } = {
+        thumb: {
+            open: () => setModal(prev => ({ ...prev, thumb: true })),
+            close: () => setModal(prev => ({ ...prev, thumb: false })),
+        },
+        delete: {
+            open: () => setModal(prev => ({ ...prev, delete: true })),
+            close: () => setModal(prev => ({ ...prev, delete: false })),
+        },
+    }
 
     if (!media || media.type === "image") return null;
 
@@ -38,8 +53,8 @@ export default function VideoPage() {
             <section>
                 <Panel>
                     <Panel.Anchor icon={faDownload} label="다운로드" href={media.downloadUrl} />
-                    <Panel.Button icon={faTrashCan} label="삭제" onClick={handleDeleteMedia} />
-                    <Panel.Button icon={faImage} label="썸네일 변경" onClick={handleToggleThumbChangeModal} />
+                    <Panel.Button icon={faTrashCan} label="삭제" onClick={modalHandler.delete.open} />
+                    <Panel.Button icon={faImage} label="썸네일 변경" onClick={modalHandler.thumb.open} />
                 </Panel>
             </section>
             <section className="description">
@@ -52,7 +67,27 @@ export default function VideoPage() {
                 <p>fps: {media.fps}</p>
             </section>
 
-            {isThumbModalOpen && <ThumbnailChangeModal onClose={handleCloseThumbChangeModal} onConfirm={handleCreateThumbnail} video={media} />}
+            {modal.thumb && (
+                <ThumbnailChangeModal
+                    video={media}
+                    onClose={modalHandler.thumb.close}
+                    onConfirm={handleCreateThumbnail}
+                />
+            )}
+
+            {modal.delete && (
+                <Modal onClose={modalHandler.delete.close}>
+                    <Modal.Header text="영상 삭제" />
+                    <Modal.Content>
+                        <p>{`"${media.id}"을 삭제합니다.`}</p>
+                        <p><i>삭제는 되돌릴 수 없습니다.</i></p>
+                    </Modal.Content>
+                    <Modal.Action>
+                        <Button label="확인" color="primary" colorType="confirm" onClick={handleDeleteMedia} />
+                        <Button label="취소" color="secondary" onClick={modalHandler.delete.close} />
+                    </Modal.Action>
+                </Modal>
+            )}
 
         </main>
     )

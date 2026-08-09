@@ -15,4 +15,6 @@ router.delete("/:id", mediaController.deleteMedia);
 /** POST /api/media/:id/thumbnail */
 router.post("/:id/thumbnail", json(), mediaController.createThumbnail);
 
+/** GET /api/media/:id */
+router.get("/:id/download", mediaController.downloadMedia)
 export default router;

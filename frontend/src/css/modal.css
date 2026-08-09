@@ -45,6 +45,11 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+
+        p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     > .modal-action {
