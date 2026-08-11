@@ -4,41 +4,48 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons"
 
 type SortOptionDropdownProps = {
     onClose?: () => void,
-    sortOption: MediaSortMode,
+    sortMode: MediaSortMode,
     onSortByKey: (key: MediaSortKey) => void,
     onSortByOrder: (order: MediaSortOrder) => void,
+    onShuffle: () => void
 }
 
-export default function SortOptionDropdown({ onClose, sortOption, onSortByKey, onSortByOrder }: SortOptionDropdownProps) {
+export default function SortOptionDropdown({ onClose, sortMode, onSortByKey, onSortByOrder, onShuffle }: SortOptionDropdownProps) {
     return (
         <Dropdown onClose={onClose}>
             <Dropdown.HeaderItem label="정렬 기준" />
             <Dropdown.ButtonItem label="이름"
                 icon={faCheck}
-                iconVisible={sortOption.type === "sort" && sortOption.key === "id"}
+                iconVisible={sortMode.type === "sort" && sortMode.key === "id"}
                 onClick={() => onSortByKey("id")}
             />
             <Dropdown.ButtonItem label="수정 시간"
                 icon={faCheck}
-                iconVisible={sortOption.type === "sort" && sortOption.key === "createdAt"}
+                iconVisible={sortMode.type === "sort" && sortMode.key === "createdAt"}
                 onClick={() => onSortByKey("createdAt")}
             />
             <Dropdown.ButtonItem label="크기"
                 icon={faCheck}
-                iconVisible={sortOption.type === "sort" && sortOption.key === "size"}
+                iconVisible={sortMode.type === "sort" && sortMode.key === "size"}
                 onClick={() => onSortByKey("size")}
             />
             <Dropdown.Separator />
             <Dropdown.HeaderItem label="정렬 순서" />
             <Dropdown.ButtonItem label="오름차순"
                 icon={faCheck}
-                iconVisible={sortOption.type === "sort" && sortOption.order === "asc"}
+                iconVisible={sortMode.type === "sort" && sortMode.order === "asc"}
                 onClick={() => onSortByOrder("asc")}
             />
             <Dropdown.ButtonItem label="내림차순"
                 icon={faCheck}
-                iconVisible={sortOption.type === "sort" && sortOption.order === "desc"}
+                iconVisible={sortMode.type === "sort" && sortMode.order === "desc"}
                 onClick={() => onSortByOrder("desc")}
+            />
+            <Dropdown.Separator />
+            <Dropdown.ButtonItem label="무작위"
+                icon={faCheck}
+                iconVisible={sortMode.type === "shuffle"}
+                onClick={() => onShuffle()}
             />
         </Dropdown>
     )

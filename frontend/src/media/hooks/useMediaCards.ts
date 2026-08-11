@@ -1,55 +1,88 @@
-import { useMemo, useState } from "react";
+import { countRender } from "#/debug/countRender";
+import { useMemo, useReducer } from "react";
+import type { MediaType } from "../api/media.api.response";
 import { useMediaCardsQuery } from "../queries/media.queries";
 import type { MediaCard, MediaSortKey, MediaSortMode, MediaSortOrder } from "../types/media";
-import type { MediaType } from "../api/media.api.response";
-import { countRender } from "#/debug/countRender";
 
-const shuffleArray = <T>(data: T[]) => {
+const createSeed = () => Math.floor(Math.random() * 2 ** 32);
+
+const seededRandom = (seed: number) => {
+    let value = seed;
+
+    return () => {
+        value = (value * 1664525 + 1013904223) >>> 0;
+        return value / 2 ** 32;
+    };
+};
+
+const shuffleArray = <T>(data: T[], seed: number) => {
     const copied = [...data];
+    const random = seededRandom(seed);
+
     for (let i = copied.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(random() * (i + 1));
         [copied[i], copied[j]] = [copied[j], copied[i]];
     }
-    return copied;
-}
 
+    return copied;
+};
 const comparator: Record<MediaSortKey, (a: MediaCard, b: MediaCard) => number> = {
     id: (a, b) => a.id.localeCompare(b.id),
     createdAt: (a, b) => a.createdAt - b.createdAt,
     size: (a, b) => a.size - b.size
 }
 
+type Action =
+    | { type: "shuffle" }
+    | { type: "sort_by_key", payload: MediaSortKey }
+    | { type: "sort_by_order", payload: MediaSortOrder }
+
+const reducer = (state: MediaSortMode, action: Action): MediaSortMode => {
+    switch (action.type) {
+        case "shuffle": return {
+            type: action.type,
+            seed: createSeed()
+        }
+        case "sort_by_key": return {
+            type: "sort",
+            key: action.payload,
+            order: (state.type === "shuffle") ? "asc" : state.order
+        }
+        case "sort_by_order": return {
+            type: "sort",
+            key: (state.type === "shuffle") ? "createdAt" : state.key,
+            order: action.payload,
+        }
+    }
+}
+
 export default function useMediaCards(type: MediaType) {
     const query = useMediaCardsQuery(type);
-    const [sortMode, setSortMode] = useState<MediaSortMode>({ type: "sort", key: "createdAt", order: "desc" });
+    const [state, dispatch] = useReducer(reducer, { type: "shuffle", seed: createSeed() })
 
     const sortedMediaCards = useMemo(() => {
         const data = query.data;
         if (!data) return [];
 
-        if (sortMode.type === "shuffle") {
-            return shuffleArray<MediaCard>(data);
-        }
+        if (state.type === "shuffle")
+            return shuffleArray(data, state.seed)
+
         const copied = [...data];
-        return copied.sort((a, b) => comparator[sortMode.key](a, b) * (sortMode.order === "asc" ? 1 : -1))
-    }, [query.data, sortMode]);
+        return copied.sort((a, b) => comparator[state.key](a, b) * (state.order === "asc" ? 1 : -1))
+    }, [query.data, state]);
+
+    const sortHandler = {
+        onSortByKey: (key: MediaSortKey) => dispatch({ type: "sort_by_key", payload: key }),
+        onSortByOrder: (order: MediaSortOrder) => dispatch({ type: "sort_by_order", payload: order }),
+        onShuffle: () => dispatch({ type: "shuffle" })
+    }
 
     countRender("useMediaCards");
 
     return {
         ...query,
-        mediaCards: sortedMediaCards,
-        sortMode,
-        sortByKey: (key: MediaSortKey) => setSortMode(prev => prev.type === "shuffle"
-            ? { type: "sort", key, order: "asc" }
-            : { ...prev, key }
-        ),
-        sortByOrder: (order: MediaSortOrder) => setSortMode(prev => prev.type === "shuffle"
-            ? { type: "sort", key: "id", order }
-            : { ...prev, order }
-        ),
-        shuffle: () => {
-            setSortMode({ type: "shuffle" })
-        }
+        sortHandler,
+        sortMode: state,
+        mediaCards: sortedMediaCards
     }
 }

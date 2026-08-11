@@ -1,4 +1,5 @@
 import FloatButton from "#/components/float-button/FloatButton";
+import { countRender } from "#/debug/countRender";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -9,10 +10,9 @@ import SortOptionDropdown from "../components/SortOptionDropdown";
 import UploadArea from "../components/UploadArea";
 import "../css/gallery-page.css";
 import useMediaCards from "../hooks/useMediaCards";
-import { countRender } from "#/debug/countRender";
 
 export default function GalleryPage({ type }: { type: MediaType }) {
-    const { mediaCards, sortMode, sortByKey, sortByOrder } = useMediaCards(type);
+    const { mediaCards, sortMode, sortHandler } = useMediaCards(type);
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
     const handleMenuToggle = () => setIsMenuOpen(prev => !prev);
@@ -28,9 +28,8 @@ export default function GalleryPage({ type }: { type: MediaType }) {
             <div className="float-wrap bottom-left">
                 {isMenuOpen && (
                     <SortOptionDropdown
-                        sortOption={sortMode}
-                        onSortByKey={sortByKey}
-                        onSortByOrder={sortByOrder}
+                        {...sortHandler}
+                        sortMode={sortMode}
                     />
                 )}
                 <FloatButton title="메뉴 열기" onClick={handleMenuToggle}>
@@ -38,7 +37,7 @@ export default function GalleryPage({ type }: { type: MediaType }) {
                 </FloatButton>
             </div>
 
-            <UploadArea type={type}/>
+            <UploadArea type={type} />
         </main>
     )
 }

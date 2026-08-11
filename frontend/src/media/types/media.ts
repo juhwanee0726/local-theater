@@ -42,11 +42,16 @@ export type Media = Video | Image;
 
 export type MediaSortKey = "id" | "createdAt" | "size";
 export type MediaSortOrder = "asc" | "desc";
-export type MediaSortMode = { type: "shuffle" } | {
-    type: "sort"
-    key: MediaSortKey,
-    order: MediaSortOrder
-}
+export type MediaSortMode =
+    | {
+        type: "shuffle",
+        seed: number
+    }
+    | {
+        type: "sort"
+        key: MediaSortKey,
+        order: MediaSortOrder
+    }
 
 export type UploadProgress = {
     loaded: number,
