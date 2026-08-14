@@ -9,7 +9,8 @@ export interface MediaCard {
     size: number,
     name?: string,
     src: string,
-    createdAt: number
+    createdAt: number,
+    showDescription?: boolean
 }
 
 interface MediaBase extends MediaCard {

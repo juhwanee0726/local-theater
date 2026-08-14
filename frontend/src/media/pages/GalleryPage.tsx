@@ -1,6 +1,6 @@
 import FloatButton from "#/components/float-button/FloatButton";
 import { countRender } from "#/debug/countRender";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import type { MediaType } from "../api/media.api.response";
@@ -13,28 +13,45 @@ import useMediaCards from "../hooks/useMediaCards";
 
 export default function GalleryPage({ type }: { type: MediaType }) {
     const { mediaCards, sortMode, sortHandler } = useMediaCards(type);
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [sortOption, setSortOption] = useState<boolean>(false);
+    const [showDescription, setShowDescription] = useState<boolean>(false);
 
-    const handleMenuToggle = () => setIsMenuOpen(prev => !prev);
+    const handleCloseSortOption = () => setSortOption(false);
+    const handleToggleSortOption = () => setSortOption(prev => !prev);
+    const handleToggleDescription = () => setShowDescription(prev => !prev);
 
     countRender("GalleryPage");
 
     return (
         <main id="gallery-page">
             <Gallery>
-                {mediaCards.map(media => <GalleryCard key={media.id} {...media} />)}
+                {mediaCards.map(media => (
+                    <GalleryCard
+                        {...media}
+                        key={media.id}
+                        showDescription={showDescription}
+                    />
+                ))}
             </Gallery>
 
             <div className="float-wrap bottom-left">
-                {isMenuOpen && (
+                {sortOption && (
                     <SortOptionDropdown
                         {...sortHandler}
                         sortMode={sortMode}
+                        onClose={handleCloseSortOption}
                     />
                 )}
-                <FloatButton title="메뉴 열기" onClick={handleMenuToggle}>
+                <FloatButton title="정렬" onClick={handleToggleSortOption}>
                     <FontAwesomeIcon icon={faBars} />
                 </FloatButton>
+            </div>
+
+            <div className="float-wrap bottom-center">
+                <FloatButton title="설명 토글" onClick={handleToggleDescription}>
+                    <FontAwesomeIcon icon={showDescription ? faToggleOn : faToggleOff} />
+                </FloatButton>
+
             </div>
 
             <UploadArea type={type} />

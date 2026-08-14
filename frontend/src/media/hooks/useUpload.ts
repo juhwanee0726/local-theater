@@ -20,12 +20,6 @@ export default function useUpload(type: MediaType) {
         [id]: p
     }))
 
-    const deleteProgressEntry = (id: string) => setUploadProgress(prev => {
-        const copied = { ...prev };
-        delete copied[id];
-        return copied;
-    })
-
     const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
         setIsUploading(true);
@@ -37,7 +31,7 @@ export default function useUpload(type: MediaType) {
                 return uploadLimit(
                     mutation.mutateAsync,
                     { file, onUploadProgress: p => addProgress(id, { file, progress: p }) },
-                ).finally(() => deleteProgressEntry(id))
+                )
             }));
             console.log(results);
         } catch (err) {

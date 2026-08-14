@@ -50,7 +50,6 @@ const UploadModal = ({ progress }: UploadModalProps) => {
                                 <p>{toSpeed(rate, estimated)}</p>
                             </div>
                         </li>
-
                     )
                 })}
             </ul>

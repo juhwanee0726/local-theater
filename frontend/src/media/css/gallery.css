@@ -42,10 +42,4 @@
             text-overflow: ellipsis;
         }
     }
-
-    @media screen and (max-width: 576px) {
-        > .description {
-            display: none;
-        }
-    }
 }

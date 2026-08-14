@@ -16,7 +16,6 @@ const Dropdown = ({ onClose, children }: DropdownProps) => {
     useEffect(() => {
         if (!onClose) return;
         const handleClickOutside = (e: MouseEvent) => {
-            console.log(e);
             if (!ref.current?.contains(e.target as Node)) {
                 onClose();
             }
@@ -24,7 +23,7 @@ const Dropdown = ({ onClose, children }: DropdownProps) => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);;
     }, [onClose]);
-    
+
     return (
         <ul className="dropdown" ref={ref}>
             {children}
@@ -35,15 +34,14 @@ const Dropdown = ({ onClose, children }: DropdownProps) => {
 // ButtonItem
 type DropdownButtonItemProps = {
     icon?: IconDefinition,
-    iconVisible?: boolean,
     label?: string,
     onClick?: () => void
 }
 
-Dropdown.ButtonItem = ({ icon, iconVisible = true, label, onClick }: DropdownButtonItemProps) => (
+Dropdown.ButtonItem = ({ icon, label, onClick }: DropdownButtonItemProps) => (
     <li>
         <button className="dropdown-content" onClick={onClick}>
-            <span className="icon">{icon && iconVisible && <FontAwesomeIcon icon={icon} />}</span>
+            <span className="icon">{icon && <FontAwesomeIcon icon={icon} />}</span>
             <span className="label">{label}</span>
         </button>
     </li>

@@ -36,6 +36,7 @@ type Action =
     | { type: "shuffle" }
     | { type: "sort_by_key", payload: MediaSortKey }
     | { type: "sort_by_order", payload: MediaSortOrder }
+    | { type: "sort", payload: { key: MediaSortKey, order: MediaSortOrder } }
 
 const reducer = (state: MediaSortMode, action: Action): MediaSortMode => {
     switch (action.type) {
@@ -52,6 +53,11 @@ const reducer = (state: MediaSortMode, action: Action): MediaSortMode => {
             type: "sort",
             key: (state.type === "shuffle") ? "createdAt" : state.key,
             order: action.payload,
+        }
+        case "sort": return {
+            type: "sort",
+            key: action.payload.key,
+            order: action.payload.order
         }
     }
 }
@@ -74,6 +80,7 @@ export default function useMediaCards(type: MediaType) {
     const sortHandler = {
         onSortByKey: (key: MediaSortKey) => dispatch({ type: "sort_by_key", payload: key }),
         onSortByOrder: (order: MediaSortOrder) => dispatch({ type: "sort_by_order", payload: order }),
+        onSort: (key: MediaSortKey, order: MediaSortOrder) => dispatch({ type: "sort", payload: { key, order } }),
         onShuffle: () => dispatch({ type: "shuffle" })
     }
 

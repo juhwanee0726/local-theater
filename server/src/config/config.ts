@@ -22,6 +22,7 @@ export const CHUNKS_DIR = path.join(TMP_DIR, "chunks");
 export const MEDIA_DIR = path.join(DATA_DIR, "media");
 
 export const DB_PATH = path.resolve(cwd, "db", process.env["DB_FILE"] ?? "media.local.sqlite");
+console.log(DB_PATH);
 
 
 /** "ab/cd/abcdefg.mp4" */

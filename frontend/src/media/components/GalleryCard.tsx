@@ -10,20 +10,20 @@ const linkTo: Record<MediaType, (id: string) => string> = {
     video: id => `/videos/${id}`
 }
 
-function GalleryCard({ id, type, src, size, createdAt }: MediaCard) {
+function GalleryCard({ id, type, src, size, createdAt, showDescription }: MediaCard) {
     return (
         <Link className="card" to={linkTo[type](id)}>
             <img className="thumbnail"
                 loading="lazy"
                 src={src}
             />
-            <div className="description">
+            {showDescription && <div className="description">
                 <p className="name">{id}</p>
                 <div>
                     <p className="size">{formatDataUnit(size)}</p>
                     <p className="mtime">{formatTime(createdAt)}</p>
                 </div>
-            </div>
+            </div>}
         </Link>
     )
 }

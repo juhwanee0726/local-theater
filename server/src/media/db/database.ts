@@ -6,7 +6,7 @@ import schema from "./schema.js";
 const db = new DatabaseSync(DB_PATH);
 db.exec("PRAGMA foreign_keys = ON;");
 db.exec(schema);
-logger.info("[DB] Database is ready");
+logger.info(`[DB] Database is ready: path: ${DB_PATH}`);
 
 export const prepareStatements = <T extends Record<string, string>>(sql: T) => {
     const result = {} as {
