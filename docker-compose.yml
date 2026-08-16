@@ -9,8 +9,6 @@ services:
 
   server:
     build: server
-    ports:
-      - ${SERVER_PORT}:3334
     env_file:
       - ./server/.env
     volumes:

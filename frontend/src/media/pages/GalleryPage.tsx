@@ -1,4 +1,5 @@
 import FloatButton from "#/components/float-button/FloatButton";
+import Popover from "#/components/popover/Popover";
 import { countRender } from "#/debug/countRender";
 import { faBars, faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,13 +14,7 @@ import useMediaCards from "../hooks/useMediaCards";
 
 export default function GalleryPage({ type }: { type: MediaType }) {
     const { mediaCards, sortMode, sortHandler } = useMediaCards(type);
-    const [sortOption, setSortOption] = useState<boolean>(false);
     const [showDescription, setShowDescription] = useState<boolean>(false);
-
-    const handleCloseSortOption = () => setSortOption(false);
-    const handleToggleSortOption = () => setSortOption(prev => !prev);
-    const handleToggleDescription = () => setShowDescription(prev => !prev);
-
     countRender("GalleryPage");
 
     return (
@@ -35,23 +30,24 @@ export default function GalleryPage({ type }: { type: MediaType }) {
             </Gallery>
 
             <div className="float-wrap bottom-left">
-                {sortOption && (
+                <Popover
+                    placement="top"
+                    trigger={
+                        <FloatButton title="정렬">
+                            <FontAwesomeIcon icon={faBars} />
+                        </FloatButton>
+                    }>
                     <SortOptionDropdown
                         {...sortHandler}
                         sortMode={sortMode}
-                        onClose={handleCloseSortOption}
                     />
-                )}
-                <FloatButton title="정렬" onClick={handleToggleSortOption}>
-                    <FontAwesomeIcon icon={faBars} />
-                </FloatButton>
+                </Popover>
             </div>
 
             <div className="float-wrap bottom-center">
-                <FloatButton title="설명 토글" onClick={handleToggleDescription}>
+                <FloatButton title="설명 토글" onClick={() => setShowDescription(prev => !prev)}>
                     <FontAwesomeIcon icon={showDescription ? faToggleOn : faToggleOff} />
                 </FloatButton>
-
             </div>
 
             <UploadArea type={type} />

@@ -1,0 +1,32 @@
+.popover-container {
+    position: relative;
+    display: inline-block;
+
+    .popover {
+        position: absolute;
+
+        &.top {
+            margin-bottom: 10px;
+            inset: auto auto 100% 50%;
+            transform: translateX(-50%);
+        }
+
+        &.right {
+            margin-left: 10px;
+            inset: 50% auto auto 100%;
+            transform: translateY(-50%);
+        }
+
+        &.left {
+            margin-right: 10px;
+            inset: 50% 100% auto auto;
+            transform: translateY(-50%);
+        }
+
+        &.bottom {
+            margin-top: 10px;
+            inset: 100% auto auto 50%;
+            transform: translateX(-50%);
+        }
+    }
+}

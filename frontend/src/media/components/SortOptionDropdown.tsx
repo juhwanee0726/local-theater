@@ -17,7 +17,7 @@ const sortOptions: { label: string; key: MediaSortKey }[] = [
 ];
 
 
-export default function SortOptionDropdown({ onClose, sortMode, onSortByKey, onSort, onShuffle }: SortOptionDropdownProps) {
+export default function SortOptionDropdown({ sortMode, onSortByKey, onSort, onShuffle }: SortOptionDropdownProps) {
     const toggleOrder = (order: MediaSortOrder): MediaSortOrder => order === "asc" ? "desc" : "asc";
     const getIcon = (key: MediaSortKey | "none") => {
         if (sortMode.type === "shuffle") {
@@ -42,7 +42,7 @@ export default function SortOptionDropdown({ onClose, sortMode, onSortByKey, onS
     };
 
     return (
-        <Dropdown onClose={onClose}>
+        <Dropdown>
             <Dropdown.HeaderItem label="정렬 기준" />
             {sortOptions.map(({ key, label }) => (
                 <Dropdown.ButtonItem

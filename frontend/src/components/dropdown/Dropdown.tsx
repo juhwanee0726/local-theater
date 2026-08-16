@@ -1,29 +1,15 @@
 import "#/css/dropdown.css";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Link, type LinkProps } from "react-router";
 
 // Root
 type DropdownProps = {
-    onClose?: () => void,
     children: React.ReactNode
-
 }
-const Dropdown = ({ onClose, children }: DropdownProps) => {
+const Dropdown = ({children }: DropdownProps) => {
     const ref = useRef<HTMLUListElement>(null);
-
-    useEffect(() => {
-        if (!onClose) return;
-        const handleClickOutside = (e: MouseEvent) => {
-            if (!ref.current?.contains(e.target as Node)) {
-                onClose();
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);;
-    }, [onClose]);
-
     return (
         <ul className="dropdown" ref={ref}>
             {children}
