@@ -13,7 +13,7 @@ type ModalType = "thumb" | "delete";
 
 export default function VideoPage() {
     const { id } = useParams();
-    const { media, onDeleteMedia, onCreateThumbnail } = useMedia(id!);
+    const { media, onMediaDelete, onThumbnailCreate } = useMedia(id!);
 
     const [modal, setModal] = useState<Record<ModalType, boolean>>({
         thumb: false,
@@ -21,13 +21,13 @@ export default function VideoPage() {
     });
     const navigate = useNavigate();
 
-    const handleDeleteMedia = () => {
-        onDeleteMedia();
+    const handleMediaDelete = () => {
+        onMediaDelete();
         navigate("/videos");
     }
 
-    const handleCreateThumbnail = (offset: number) => {
-        onCreateThumbnail(offset);
+    const handleThumbnailCreate = (offset: number) => {
+        onThumbnailCreate(offset);
         navigate("/videos");
     }
 
@@ -71,7 +71,7 @@ export default function VideoPage() {
                 <ThumbnailChangeModal
                     video={media}
                     onClose={modalHandler.thumb.close}
-                    onConfirm={handleCreateThumbnail}
+                    onConfirm={handleThumbnailCreate}
                 />
             )}
 
@@ -83,7 +83,7 @@ export default function VideoPage() {
                         <p><i>삭제는 되돌릴 수 없습니다.</i></p>
                     </Modal.Content>
                     <Modal.Action>
-                        <Button label="확인" color="primary" colorType="confirm" onClick={handleDeleteMedia} />
+                        <Button label="확인" color="primary" colorType="confirm" onClick={handleMediaDelete} />
                         <Button label="취소" color="secondary" onClick={modalHandler.delete.close} />
                     </Modal.Action>
                 </Modal>

@@ -15,3 +15,4 @@ logs
 
 # Development
 backup/
+*.dev.*

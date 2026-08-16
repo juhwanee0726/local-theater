@@ -44,7 +44,7 @@ export default function ThumbnailChangeModal({ video, onConfirm, onClose }: Thum
         videoRef.current.currentTime = curTime;
     }, [curTime])
 
-    const handleChangeCurTime = (e: React.InputEvent<HTMLInputElement>) => setCurTime(Number(e.currentTarget.value));
+    const handleCurTimeChange = (e: React.InputEvent<HTMLInputElement>) => setCurTime(Number(e.currentTarget.value));
 
     const handleMove = (direction: "next" | "prev") => {
         if (!video) return;
@@ -96,7 +96,7 @@ export default function ThumbnailChangeModal({ video, onConfirm, onClose }: Thum
                             min={0}
                             max={video.duration}
                             step={1 / video.fps}
-                            onInput={handleChangeCurTime}
+                            onInput={handleCurTimeChange}
                         />
                         <div className="thumb-control__btn">
                             <button onClick={() => handleMove("prev")}>{`<`}</button>

@@ -1,4 +1,3 @@
-import DebugPage from "#/debug/DebugPage.dev";
 import MainPage from "#/MainPage";
 import GalleryPage from "#/media/pages/GalleryPage";
 import ImagePage from "#/media/pages/ImagePage";
@@ -25,10 +24,6 @@ const mediaRouter = createBrowserRouter([
     {
         path: "/images/:id",
         element: <ImagePage />
-    },
-    {
-        path: "/debug",
-        element: <DebugPage/>
     }
 ])
 
