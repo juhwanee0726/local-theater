@@ -15,4 +15,6 @@ logs
 
 # Development
 backup/
-*.dev.*
+dev/
+Dockerfile.dev
+docker-compose.dev.yml
