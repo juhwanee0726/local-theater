@@ -27,7 +27,7 @@ interface MediaUrl {
     downloadUrl: string,
 }
 
-export interface VideoResponse extends MediaResponseBase, MediaUrl,  Dimension {
+export interface VideoResponse extends MediaResponseBase, MediaUrl, Dimension {
     type: "video",
     status: "ready",
     duration: number,
@@ -36,7 +36,7 @@ export interface VideoResponse extends MediaResponseBase, MediaUrl,  Dimension {
     thumbnailUrl: string,
 }
 
-export interface ImageResponse extends MediaResponseBase, MediaUrl,  Dimension {
+export interface ImageResponse extends MediaResponseBase, MediaUrl, Dimension {
     type: "image",
     status: "ready",
     url: string,

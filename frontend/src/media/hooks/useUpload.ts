@@ -1,11 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query";
 import pLimit from "p-limit";
 import { useState } from "react";
+import { v4 } from "uuid";
 import type { MediaType } from "../api/media.api.response";
+import { mediaKeys } from "../queries/media.keys";
 import { useMediaUploadMutation } from "../queries/media.mutations";
 import type { UploadItem } from "../types/media";
-import { useQueryClient } from "@tanstack/react-query";
-import { mediaKeys } from "../queries/media.keys";
-import {v4} from "uuid";
 
 export const uploadLimit = pLimit(3);
 
@@ -36,8 +36,10 @@ export default function useUpload(type: MediaType) {
             console.log(results);
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsUploading(false);
+            setUploadProgress({});
         }
-        setIsUploading(false);
         await qc.invalidateQueries({ queryKey: mediaKeys.list(type) });
     }
 

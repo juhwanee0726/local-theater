@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { sha256 } from "js-sha256";
 import plimit from "p-limit";
 import { mediaApi, uploadApi } from "../api/media.api";
 import type { MediaType } from "../api/media.api.response";
-import { mediaKeys } from "./media.keys";
 import type { UploadProgress } from "../types/media";
-import { sha256 } from "js-sha256";
+import { mediaKeys } from "./media.keys";
 
 export const networkLimit = plimit(5);
 
@@ -44,7 +44,7 @@ export const useThumbnailCreateMutation = () => {
 
 const getHash = async (file: File | Blob) => sha256(await file.bytes());
 
-const sliceFile = async (file: File, chunkSize: number) => {
+const sliceFile = (file: File, chunkSize: number) => {
     const chunks = [];
 
     for (
@@ -54,9 +54,8 @@ const sliceFile = async (file: File, chunkSize: number) => {
     ) {
         end = start + chunkSize;
         const blob = file.slice(start, end);
-        const hash = await getHash(blob);
 
-        chunks.push({ index, blob, hash });
+        chunks.push({ index, blob });
     }
     return chunks;
 }
@@ -116,26 +115,37 @@ export const useMediaUploadMutation = (type: MediaType) => {
 
             // Single Upload
             if (contract.uploadType === "single") {
-                const hash = await getHash(file);
-
-                return networkLimit(uploadApi.uploadSingle,
-                    contract.sessionId, file, hash,
-                    p => onUploadProgress?.({
-                        ...p,
-                        total: file.size,
-                    })
-                )
+                return networkLimit(async () => {
+                    const hash = await getHash(file);
+                    return uploadApi.uploadSingle(
+                        contract.sessionId,
+                        file,
+                        hash,
+                        p => onUploadProgress?.({
+                            ...p,
+                            total: file.size,
+                        })
+                    )
+                })
             }
 
             // Chunk Upload
             const progressMap = createProgressMap(file.size, onUploadProgress);
-            const chunks = await sliceFile(file, contract.chunkSize);
+            const chunks = sliceFile(file, contract.chunkSize);
 
-            await Promise.all(chunks.map(chunk => networkLimit(
-                uploadApi.uploadPart,
-                contract.sessionId, chunk,
-                p => progressMap.update(chunk.index, p.loaded, p.bytes)
-            )));
+            const result = await Promise.allSettled(chunks.map(({ blob, index }) => networkLimit(async () => {
+                const hash = await getHash(blob);
+                return uploadApi.uploadPart(
+                    contract.sessionId,
+                    { blob, hash, index },
+                    p => progressMap.update(index, p.loaded, p.bytes)
+                )
+            })));
+
+            console.log(result);
+
+            if (result.filter(v => v.status === "rejected").length > 0)
+                throw new Error("Rejected part detected");
 
             console.log(`All parts uploaded from ${file.name}`);
             return uploadApi.merge(contract.sessionId);
