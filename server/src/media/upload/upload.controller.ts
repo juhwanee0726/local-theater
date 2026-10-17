@@ -1,4 +1,3 @@
-import { HttpError } from "#/error/error.js";
 import { RequestHandler } from "express";
 import { UploadSessionCreateRequest } from "../types/upload.request.js";
 import { UploadSessionCreateResponse, UploadSessionResponse } from "../types/upload.response.js";
@@ -28,11 +27,7 @@ const getUploadSession: RequestHandler<{ sessionId: string }, UploadSessionRespo
 
 /** PUT /api/uploads/:sessionId/file */
 const uploadSingle: RequestHandler<{ sessionId: string }> = async (req, res) => {
-    const oriHash = req.header("x-file-hash");
-    if (!oriHash)
-        throw new HttpError(400, "Required \"x-file-hash\" header");
-
-    const tmp = await singleUploadSevice.upload(req, req.params.sessionId, oriHash);
+    const tmp = await singleUploadSevice.upload(req, req.params.sessionId);
     const pendingMedia = await postUploadService.createPendingMedia(tmp);
 
     res.sendStatus(201);
@@ -41,13 +36,8 @@ const uploadSingle: RequestHandler<{ sessionId: string }> = async (req, res) => 
 
 /** PUT /api/uploads/:sessionId/chunks/:index */
 const uploadPart: RequestHandler<{ sessionId: string, index: string }> = async (req, res) => {
-    const oriHash = req.header("x-chunk-hash");
-    if (!oriHash)
-        throw new HttpError(400, "Required \"x-chunk-hash\" header");
-    
-    await chunkUploadService.uploadPart(req, req.params.sessionId, Number(req.params.index), oriHash);
+    await chunkUploadService.uploadPart(req, req.params.sessionId, Number(req.params.index));
     res.sendStatus(201);
-
 }
 
 /** POST /api/uploads/:sessionId/chunks/merge */

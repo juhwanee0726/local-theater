@@ -17,11 +17,10 @@ export const uploadApi = {
         return client.get(`/api/uploads/${sessionId}`);
     },
     /** PUT "/api/uploads/:sessionId/file" */
-    uploadSingle: (sessionId: string, file: File, oriHash: string, onUploadProgress?: (p: UploadProgress) => void): Promise<void> => {
+    uploadSingle: (sessionId: string, file: File, onUploadProgress?: (p: UploadProgress) => void): Promise<void> => {
         const form = new FormData();
         form.append("f", file);
         return client.put(`/api/uploads/${sessionId}/file`, form, {
-            headers: { "x-file-hash": oriHash },
             onUploadProgress: ({ loaded, bytes, estimated, rate }) => onUploadProgress?.({ loaded, bytes, estimated, rate, total: 0 })
         })
     },
@@ -30,7 +29,6 @@ export const uploadApi = {
         const form = new FormData();
         form.append("f", data.blob);
         return client.put(`/api/uploads/${sessionId}/chunks/${data.index}`, form, {
-            headers: { "x-chunk-hash": data.hash },
             onUploadProgress: ({ loaded, bytes }) => onUploadProgress?.({ loaded, bytes, total: 0 })
         })
     },
@@ -56,6 +54,6 @@ export const mediaApi = {
     },
     /** POST /api/media/:id/thumbnail */
     createThumbnail: (id: string, offset: number): Promise<void> => {
-        return client.post(`/api/media/${id}/thumbnail`, {offset});
+        return client.post(`/api/media/${id}/thumbnail`, { offset });
     }
 }

@@ -11,7 +11,7 @@ import uploadSessionRepository from "./upload-session.repository.js";
 import busboy from "busboy";
 
 const chunkUploadService = {
-    uploadPart: async (req: Request, sessionId: string, index: number, oriHash: string) => {
+    uploadPart: async (req: Request, sessionId: string, index: number) => {
         const session = uploadSessionRepository.findById(sessionId);
         if (!session) throw new HttpError(404, "Session not found");
         if (session.uploadType !== "chunk") throw new HttpError(400, "Invalid Upload type");
@@ -47,16 +47,6 @@ const chunkUploadService = {
             req.on("error", reject);
             req.pipe(bb);
         })
-
-        if (hash !== oriHash) {
-            await fsp.unlink(chunkPath)
-                .then(() => logger.info(`Unlinked ${chunkPath}`))
-                .catch(e => logger.warn(`Failed to unlink: ${e.message}`));
-            throw new HttpError(409, "File hash mismatch", {
-                except: oriHash,
-                actual: hash
-            });
-        }
 
         uploadSessionRepository.saveChunk(sessionId, { hash, index });
         logger.info(`Uploaded ${chunkName}`);

@@ -15,7 +15,7 @@ const mediaRouter = createBrowserRouter([
     },
     {
         path: "/videos/:id",
-        element: <VideoPage/>
+        element: <VideoPage />
     },
     {
         path: "/images",

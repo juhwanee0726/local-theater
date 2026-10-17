@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { sha256 } from "js-sha256";
 import plimit from "p-limit";
 import { mediaApi, uploadApi } from "../api/media.api";
 import type { MediaType } from "../api/media.api.response";
 import type { UploadProgress } from "../types/media";
 import { mediaKeys } from "./media.keys";
 
-export const networkLimit = plimit(5);
+export const networkLimit = plimit(3);
 
 export const useMediaDeleteMutation = (type?: MediaType) => {
     const qc = useQueryClient();
@@ -32,33 +31,6 @@ export const useThumbnailCreateMutation = () => {
 //
 // ----- Upload --------------------------------------------------
 //
-
-// const getHash = async (file: File | Blob, algorithm: string) => {
-//     const fileBuffer = await file.arrayBuffer();
-//     const hashBuffer = await crypto.subtle.digest(algorithm, fileBuffer);
-//     const hash = Array.from(new Uint8Array(hashBuffer))
-//         .map(digit => digit.toString(16).padStart(2, "0"))
-//         .join("");
-//     return hash;
-// }
-
-const getHash = async (file: File | Blob) => sha256(await file.bytes());
-
-const sliceFile = (file: File, chunkSize: number) => {
-    const chunks = [];
-
-    for (
-        let index = 0, start = 0, end = 0;
-        start < file.size;
-        start = end, index++
-    ) {
-        end = start + chunkSize;
-        const blob = file.slice(start, end);
-
-        chunks.push({ index, blob });
-    }
-    return chunks;
-}
 
 const createProgressMap = (total: number, onUploadProgress?: (p: UploadProgress) => void) => {
     const loadedMap = new Map<number, number>();
@@ -116,11 +88,9 @@ export const useMediaUploadMutation = (type: MediaType) => {
             // Single Upload
             if (contract.uploadType === "single") {
                 return networkLimit(async () => {
-                    const hash = await getHash(file);
                     return uploadApi.uploadSingle(
                         contract.sessionId,
                         file,
-                        hash,
                         p => onUploadProgress?.({
                             ...p,
                             total: file.size,
@@ -131,15 +101,17 @@ export const useMediaUploadMutation = (type: MediaType) => {
 
             // Chunk Upload
             const progressMap = createProgressMap(file.size, onUploadProgress);
-            const chunks = sliceFile(file, contract.chunkSize);
+            const chunkCnt = Math.ceil(file.size / contract.chunkSize);
 
-            const result = await Promise.allSettled(chunks.map(({ blob, index }) => networkLimit(async () => {
-                const hash = await getHash(blob);
+            const result = await Promise.allSettled(Array.from({ length: chunkCnt }).map((_, index) => networkLimit(async () => {
+                const start = index * contract.chunkSize;
+                const blob = file.slice(start, start + contract.chunkSize);
+
                 return uploadApi.uploadPart(
                     contract.sessionId,
-                    { blob, hash, index },
+                    { blob, index },
                     p => progressMap.update(index, p.loaded, p.bytes)
-                )
+                ).then(() => console.log(`${file.name}-${index} uploaded`));
             })));
 
             console.log(result);

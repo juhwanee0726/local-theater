@@ -11,7 +11,7 @@ import { UploadTmp } from "../types/upload.types.js";
 import uploadSessionRepository from "./upload-session.repository.js";
 
 const singleUploadSevice = {
-    upload: async (req: Request, sessionId: string, oriHash: string): Promise<UploadTmp> => {
+    upload: async (req: Request, sessionId: string): Promise<UploadTmp> => {
         const bb = busboy({ headers: req.headers });
         const session = uploadSessionRepository.findById(sessionId);
         if (!session) throw new HttpError(404, "Session not found");
@@ -34,13 +34,6 @@ const singleUploadSevice = {
                 req.on("error", reject);
                 req.pipe(bb);
             });
-
-            if (hash !== oriHash) {
-                throw new HttpError(409, "File hash mismatch", {
-                    expect: oriHash,
-                    actual: hash
-                });
-            }
             if (mediaService.existsMedia(hash)) {
                 throw new HttpError(409, "File already exists");
             }

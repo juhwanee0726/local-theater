@@ -7,7 +7,7 @@ import { mediaKeys } from "../queries/media.keys";
 import { useMediaUploadMutation } from "../queries/media.mutations";
 import type { UploadItem } from "../types/media";
 
-export const uploadLimit = pLimit(3);
+export const uploadLimit = pLimit(5);
 
 export default function useUpload(type: MediaType) {
     const qc = useQueryClient();

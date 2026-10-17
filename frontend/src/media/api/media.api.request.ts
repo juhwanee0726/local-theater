@@ -8,6 +8,5 @@ export type UploadSessionCreateRequest = {
 
 export type UploadSessionPartRequest = {
     index: number,
-    hash: string,
     blob: Blob
 }
